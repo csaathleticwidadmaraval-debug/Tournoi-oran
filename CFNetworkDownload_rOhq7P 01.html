@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" id="htmlRoot">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#060B18">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>بطولة مدارس غرب وهران</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#060B18; --bg2:#0A1226; --surface:#0F1B36; --surface-2:#16244A;
+    --line:rgba(200,215,255,0.13); --text:#EAF0FF; --dim:#7C8CB5;
+    --accent:#4C8EFF; --accent-dark:#1E4FA8; --accent2:#8B6CF7;
+    --win:#3DDC97; --red:#FF5C7A; --yellow:#FFD166;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:radial-gradient(ellipse at top, var(--bg2) 0%, var(--bg) 60%);color:var(--text);
+    font-family:'Almarai','Poppins',sans-serif;font-weight:400;-webkit-font-smoothing:antialiased;min-height:100vh;}
+  #app{max-width:480px;margin:0 auto;min-height:100vh;display:flex;flex-direction:column;position:relative;}
+
+  header.top{padding:20px 18px 14px;text-align:center;position:relative;}
+  .langsw{position:absolute;top:16px;inset-inline-end:16px;display:flex;background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;}
+  .langsw button{border:none;background:none;color:var(--dim);font-family:inherit;font-size:11px;font-weight:700;padding:6px 10px;cursor:pointer;}
+  .langsw button.active{background:var(--accent);color:#04101f;}
+  header.top h1{font-size:18px;font-weight:800;margin:0;letter-spacing:0.2px;}
+  header.top .season{display:inline-block;margin-top:8px;font-size:11px;color:var(--accent);background:rgba(76,142,255,0.12);border:1px solid rgba(76,142,255,0.35);border-radius:20px;padding:3px 12px;}
+  header.top .sub{font-size:11.5px;color:var(--dim);margin-top:8px;}
+  header.top .rule{width:44px;height:3px;background:linear-gradient(90deg,var(--accent),var(--accent2));margin:12px auto 0;border-radius:2px;}
+
+  main{flex:1;padding:4px 16px 92px;}
+  .subtabs{display:flex;gap:6px;margin:14px 0 16px;overflow-x:auto;padding-bottom:2px;}
+  .subtabs button{flex:0 0 auto;background:var(--surface);color:var(--dim);border:1px solid var(--line);padding:7px 13px;border-radius:20px;font-family:inherit;font-size:12.5px;font-weight:700;cursor:pointer;}
+  .subtabs button.active{background:var(--accent);color:#04101f;border-color:var(--accent);box-shadow:0 3px 0 var(--accent-dark);}
+
+  .banner{background:linear-gradient(135deg, rgba(76,142,255,0.16), rgba(139,108,247,0.10));border:1px solid rgba(76,142,255,0.3);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .banner .lbl{font-size:11px;color:var(--dim);}
+  .banner .teams{font-size:13px;font-weight:700;margin-top:2px;}
+  .banner .cd{font-size:16px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .toolbar{display:flex;justify-content:flex-end;margin-bottom:8px;}
+
+  table.standings{width:100%;border-collapse:collapse;font-size:12px;}
+  table.standings th{color:var(--dim);font-weight:700;font-size:10.5px;padding:8px 3px;text-align:center;border-bottom:1px solid var(--line);}
+  table.standings th.name-col,table.standings td.name-col{text-align:start;padding-inline-start:4px;}
+  table.standings td{padding:9px 3px;text-align:center;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums;}
+  table.standings td.name-col{font-weight:700;font-size:12.5px;cursor:pointer;}
+  table.standings td.pts{color:var(--accent);font-weight:800;font-size:13.5px;}
+  table.standings tr.top3 td.name-col{border-inline-start:3px solid var(--accent);}
+  table.standings tr:nth-child(even){background:rgba(234,240,255,0.02);}
+  .dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-inline-end:6px;vertical-align:middle;}
+  .empty-note{color:var(--dim);font-size:13px;text-align:center;padding:30px 10px;line-height:1.9;}
+
+  .field-row{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap;}
+  .field-row label{font-size:12px;color:var(--dim);}
+  input[type=date],input[type=month],input[type=text],input[type=number],input[type=password],input[type=color],select,textarea{
+    background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px;flex:1;min-width:0;}
+  input[type=color]{flex:none;width:40px;padding:2px;height:36px;}
+  textarea{resize:vertical;min-height:50px;width:100%;}
+
+  button.primary,button.ghost,button.danger{cursor:pointer;font-family:inherit;transition:transform .08s, box-shadow .08s;}
+  button.primary{background:linear-gradient(180deg,#6AA3FF,var(--accent));color:#04101f;border:none;border-radius:11px;padding:11px 18px;font-weight:800;font-size:13px;box-shadow:0 5px 0 var(--accent-dark), 0 8px 16px rgba(76,142,255,0.3);}
+  button.primary:active{transform:translateY(4px);box-shadow:0 1px 0 var(--accent-dark), 0 2px 6px rgba(76,142,255,0.25);}
+  button.ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px 13px;font-size:12px;font-weight:700;box-shadow:0 3px 0 rgba(0,0,0,0.35);}
+  button.ghost:active{transform:translateY(3px);box-shadow:none;}
+  button.danger{background:rgba(255,92,122,0.12);color:var(--red);border:1px solid rgba(255,92,122,0.4);border-radius:9px;padding:6px 11px;font-size:11.5px;font-weight:700;box-shadow:0 2px 0 rgba(255,92,122,0.25);}
+  button.danger:active{transform:translateY(2px);box-shadow:none;}
+
+  .day-group{margin-bottom:18px;}
+  .day-group h3{font-size:12px;color:var(--accent2);font-weight:700;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid var(--line);}
+  .match-card{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 4px;border-bottom:1px solid var(--line);}
+  .match-card .teams{flex:1;min-width:0;}
+  .match-card .teams .t{font-size:13.5px;font-weight:700;line-height:1.7;cursor:pointer;}
+  .match-card .meta{font-size:10.5px;color:var(--dim);margin-top:2px;line-height:1.7;}
+  .match-card .meta .venue{color:#9FB4E8;}
+  .match-card .score{font-size:17px;font-weight:800;color:var(--accent);font-variant-numeric:tabular-nums;padding:0 6px;text-align:center;min-width:46px;}
+  .match-card .score.tbd{color:var(--dim);font-size:11px;font-weight:400;}
+
+  section.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:0 10px 24px rgba(0,0,0,0.25);}
+  section.card h2{font-size:14px;font-weight:800;margin:0 0 12px;}
+
+  .admin-gate{padding:40px 10px;text-align:center;}
+  .admin-gate p{color:var(--dim);font-size:13px;margin-bottom:16px;}
+  .admin-gate .err{color:var(--red);font-size:12px;margin-top:8px;}
+  .admin-name{font-size:12px;color:var(--dim);margin-bottom:14px;}
+  .admin-name b{color:var(--accent);}
+
+  .list-row{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;flex-wrap:wrap;}
+  .list-row .info{flex:1;min-width:0;}
+  .list-row .info b{font-size:13.5px;}
+  .list-row .info .m{font-size:10.5px;color:var(--dim);display:block;margin-top:2px;}
+  .badge{font-size:9.5px;padding:3px 8px;border-radius:10px;font-weight:700;}
+  .badge.done{background:rgba(61,220,151,0.18);color:var(--win);}
+  .badge.pending{background:rgba(124,140,181,0.18);color:var(--dim);}
+  .badge.ko{background:rgba(139,108,247,0.2);color:var(--accent2);}
+
+  .result-inputs{display:flex;align-items:center;gap:6px;}
+  .result-inputs input{width:42px;text-align:center;padding:6px 4px;flex:none;}
+
+  .details-box{width:100%;background:var(--surface-2);border-radius:10px;padding:12px;margin-top:8px;}
+  .details-box h4{font-size:11.5px;color:var(--dim);margin:10px 0 6px;}
+  .details-box h4:first-child{margin-top:0;}
+  .mini-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
+  .mini-row input,.mini-row select{padding:6px 8px;font-size:12px;}
+  .ev-item{display:flex;justify-content:space-between;align-items:center;font-size:12px;padding:5px 0;border-bottom:1px dashed var(--line);}
+
+  .squad-box{width:100%;background:var(--surface-2);border-radius:10px;padding:10px;margin-top:8px;}
+  .player-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:4px 6px 4px 10px;font-size:11.5px;margin:3px;}
+  .player-chip button{background:none;border:none;color:var(--red);cursor:pointer;font-size:13px;padding:0 2px;}
+
+  nav.tabbar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:var(--surface);border-top:1px solid var(--line);display:flex;box-shadow:0 -8px 24px rgba(0,0,0,0.35);}
+  nav.tabbar button{flex:1;background:none;border:none;color:var(--dim);font-family:inherit;font-size:10.3px;font-weight:700;padding:11px 1px 9px;cursor:pointer;position:relative;}
+  nav.tabbar button.active{color:var(--accent);}
+  nav.tabbar button.active::after{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:22px;height:3px;background:var(--accent);border-radius:0 0 3px 3px;box-shadow:0 0 8px var(--accent);}
+
+  .print-preview{background:#fff;color:#111;border-radius:6px;padding:18px;font-size:13px;}
+  .print-preview h3{margin:0 0 4px;font-size:16px;}
+  .print-preview .pp-sub{font-size:11px;color:#555;margin-bottom:14px;}
+  .print-preview table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px;}
+  .print-preview table th,.print-preview table td{border:1px solid #999;padding:6px 5px;text-align:center;}
+  .sheet-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:10px;}
+  .sheet-box{border:1px solid #999;border-radius:4px;padding:10px;min-height:150px;}
+  .sheet-box h4{margin:0 0 8px;font-size:13px;text-align:center;}
+  .sheet-line{border-bottom:1px solid #ccc;height:22px;margin-bottom:6px;}
+  .sig-row{display:flex;justify-content:space-between;margin-top:20px;font-size:11.5px;gap:10px;}
+  .sig-row div{flex:1;text-align:center;}
+  .sig-row .line{border-top:1px solid #666;margin-top:26px;padding-top:4px;}
+
+  .news-item{padding:12px 0;border-bottom:1px solid var(--line);}
+  .news-item .d{font-size:10.5px;color:var(--dim);margin-bottom:4px;}
+  .news-item .t{font-size:13.5px;line-height:1.8;}
+
+  .modal-overlay{display:none;position:fixed;inset:0;background:rgba(2,6,16,0.72);z-index:50;align-items:flex-end;justify-content:center;}
+  .modal-overlay.open{display:flex;}
+  .modal-box{background:var(--surface);border:1px solid var(--line);border-radius:18px 18px 0 0;max-width:480px;width:100%;max-height:82vh;overflow-y:auto;padding:18px;}
+  .modal-box .close-row{display:flex;justify-content:flex-end;margin-bottom:6px;}
+  .modal-box h2{font-size:16px;margin:0 0 4px;}
+
+  .log-item{font-size:11px;color:var(--dim);padding:6px 0;border-bottom:1px dashed var(--line);}
+  .log-item b{color:var(--text);}
+
+  #loading{padding:60px 20px;text-align:center;color:var(--dim);font-size:13px;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #printArea, #printArea *{visibility:visible;}
+    #printArea{position:absolute;top:0;left:0;width:100%;}
+    nav.tabbar{display:none;}
+  }
+</style>
+
+<script>
+// ===== Storage adapter (works everywhere: browser localStorage or host storage) =====
+const storageAdapter = (window.storage && window.storage.get && window.storage.set) ? {
+  get: async (k)=>{ try{ return await window.storage.get(k, true); }catch(e){ return null; } },
+  set: async (k,v)=>{ try{ return await window.storage.set(k, v, true); }catch(e){} }
+} : {
+  get: async (k)=>{ const v = localStorage.getItem(k); return v===null?null:{value:v}; },
+  set: async (k,v)=>{ localStorage.setItem(k,v); }
+};
+</script>
+
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="langsw" id="langsw"><button data-lang="ar">AR</button><button data-lang="fr">FR</button></div>
+    <h1 id="appTitleH1"></h1>
+    <div class="season" id="seasonBadge"></div>
+    <div class="sub" id="appSubtitleDiv"></div>
+    <div class="rule"></div>
+  </header>
+  <main id="main"><div id="loading">...</div></main>
+  <nav class="tabbar" id="tabbar" style="display:none">
+    <button data-tab="standings"></button>
+    <button data-tab="schedule"></button>
+    <button data-tab="scorers"></button>
+    <button data-tab="news"></button>
+    <button data-tab="print"></button>
+    <button data-tab="admin"></button>
+  </nav>
+</div>
+<div class="modal-overlay" id="teamModal"><div class="modal-box" id="teamModalBox"></div></div>
+<div id="printArea" style="display:none"></div>
+
+<script>
+const DICT = {
+  appTitle:{ar:'بطولة مدارس غرب وهران', fr:"Tournoi des écoles de l'Ouest d'Oran"},
+  appSubtitle:{ar:'الترتيب · البرنامج · الهدافون · الأخبار', fr:'Classement · Calendrier · Buteurs · Actualités'},
+  loading:{ar:'جاري تحميل بيانات البطولة...', fr:'Chargement des données du tournoi...'},
+  tabStandings:{ar:'الترتيب', fr:'Classement'},
+  tabSchedule:{ar:'البرنامج', fr:'Calendrier'},
+  tabScorers:{ar:'الهدافون', fr:'Buteurs'},
+  tabNews:{ar:'الأخبار', fr:'Actualités'},
+  tabPrint:{ar:'الطباعة', fr:'Impression'},
+  tabAdmin:{ar:'المسير', fr:'Organisateur'},
+
+  nextMatch:{ar:'المباراة القادمة', fr:'Prochain match'},
+  now:{ar:'الآن', fr:'Maintenant'},
+  cdDay:{ar:'ي', fr:'j'}, cdHour:{ar:'س', fr:'h'}, cdMin:{ar:'د', fr:'min'},
+  share:{ar:'مشاركة 📤', fr:'Partager 📤'},
+  noTeamsYet:{ar:'لم تُضَف أي فرق بعد.<br>يمكن للمسير إضافة الفرق من نافذة «المسير».', fr:"Aucune équipe ajoutée pour l'instant.<br>L'organisateur peut ajouter des équipes depuis l'onglet « Organisateur »."},
+  colRank:{ar:'#', fr:'#'}, colTeam:{ar:'الفريق', fr:'Équipe'}, colPlayed:{ar:'لعب', fr:'J'},
+  colWon:{ar:'فاز', fr:'G'}, colDrawn:{ar:'تعادل', fr:'N'}, colLost:{ar:'خسر', fr:'P'},
+  colFor:{ar:'له', fr:'BP'}, colAgainst:{ar:'عليه', fr:'BC'}, colDiff:{ar:'الفرق', fr:'Diff'}, colPts:{ar:'نقاط', fr:'Pts'},
+
+  subDaily:{ar:'يومي', fr:'Quotidien'}, subWeekly:{ar:'أسبوعي', fr:'Hebdo'},
+  subMonthly:{ar:'شهري', fr:'Mensuel'}, subGeneral:{ar:'عام', fr:'Général'}, subKnockout:{ar:'الإقصائيات', fr:'Phase finale'},
+  lblDate:{ar:'التاريخ', fr:'Date'}, lblWeekDay:{ar:'أي يوم من الأسبوع', fr:'Un jour de la semaine'}, lblMonth:{ar:'الشهر', fr:'Mois'},
+  noMatchesPeriod:{ar:'لا توجد مباريات مبرمجة في هذه الفترة.', fr:'Aucun match programmé sur cette période.'},
+  noKnockoutYet:{ar:'لا توجد مباريات في الأدوار الإقصائية بعد.', fr:'Aucun match de phase finale pour le moment.'},
+  undefinedRound:{ar:'دور غير محدد', fr:'Tour non défini'},
+  venueLbl:{ar:'الملعب: ', fr:'Terrain : '}, venueUnset:{ar:'غير محدد', fr:'non défini'},
+  notPlayed:{ar:'لم تُلعب', fr:'Non joué'}, koBadge:{ar:'إقصائي', fr:'Phase finale'}, doneBadge:{ar:'انتهت', fr:'Terminé'},
+
+  scTop:{ar:'الهدافون', fr:'Buteurs'}, scGk:{ar:'الحراس', fr:'Gardiens'}, scFair:{ar:'اللعب النظيف', fr:'Fair-play'},
+  noGoalsYet:{ar:'لا توجد أهداف مسجلة بعد.<br>يضيفها المسير من تفاصيل كل مباراة.', fr:"Aucun but enregistré pour l'instant.<br>L'organisateur peut les ajouter depuis les détails de chaque match."},
+  colPlayer:{ar:'اللاعب', fr:'Joueur'}, colGoals:{ar:'أهداف', fr:'Buts'},
+  noFinishedYet:{ar:'لا توجد مباريات منتهية بعد.', fr:'Aucun match terminé pour le moment.'},
+  colConceded:{ar:'أهداف مستقبلة', fr:'Buts encaissés'},
+  noTeamsShort:{ar:'لا توجد فرق بعد.', fr:"Aucune équipe pour l'instant."},
+  colYellow:{ar:'صفراء', fr:'Jaunes'}, colRed:{ar:'حمراء', fr:'Rouges'},
+
+  noNewsYet:{ar:'لا توجد أخبار أو إعلانات بعد.', fr:"Aucune actualité pour l'instant."},
+
+  psSheet:{ar:'ورقة اللقاء', fr:'Feuille de match'}, psSchedule:{ar:'برنامج الطباعة', fr:'Calendrier à imprimer'},
+  noMatchesForSheet:{ar:'لا توجد مباريات بعد لإنشاء ورقة لقاء.', fr:"Aucun match pour l'instant."},
+  officialSheet:{ar:'ورقة اللقاء الرسمية', fr:'Feuille de match officielle'},
+  time:{ar:'الوقت', fr:'Heure'}, venue:{ar:'الملعب', fr:'Terrain'},
+  finalResult:{ar:'النتيجة النهائية', fr:'Résultat final'}, refNotes:{ar:'ملاحظات الحكم', fr:"Observations de l'arbitre"},
+  refSig:{ar:'توقيع الحكم', fr:"Signature de l'arbitre"}, mgrSig:{ar:'توقيع مسير', fr:"Signature responsable de"},
+  printSheetBtn:{ar:'🖨 طباعة ورقة اللقاء', fr:'🖨 Imprimer la feuille de match'},
+  printSchedBtn:{ar:'🖨 طباعة البرنامج', fr:'🖨 Imprimer le calendrier'},
+  scheduleTitle:{ar:'برنامج المباريات — ', fr:'Calendrier des matchs — '},
+  colTeam1:{ar:'الفريق الأول', fr:'Équipe 1'}, colTeam2:{ar:'الفريق الثاني', fr:'Équipe 2'}, colRound:{ar:'الجولة', fr:'Journée'},
+  noMatchesTable:{ar:'لا توجد مباريات', fr:'Aucun match'}, seasonAll:{ar:'كامل الموسم', fr:'Toute la saison'},
+  fromTo:{ar:'من ', fr:'Du '}, toWord:{ar:' إلى ', fr:' au '},
+
+  adminGateText:{ar:'هذه النافذة مخصصة لمسيري البطولة فقط، لإدخال الفرق والنقاط ونتائج المباريات.', fr:"Cet espace est réservé aux organisateurs du tournoi, pour saisir les équipes, les points et les résultats."},
+  pinPlaceholder:{ar:'الرمز السري', fr:'Code secret'}, enterBtn:{ar:'دخول', fr:'Entrer'},
+  wrongPin:{ar:'رمز غير صحيح، أعد المحاولة.', fr:'Code incorrect, réessayez.'},
+  welcome:{ar:'مرحباً ', fr:'Bienvenue '},
+  addTeamTitle:{ar:'إضافة فريق', fr:'Ajouter une équipe'}, teamNamePh:{ar:'اسم الفريق', fr:"Nom de l'équipe"},
+  addBtn:{ar:'إضافة', fr:'Ajouter'}, noTeamsAdmin:{ar:'لا توجد فرق بعد.', fr:"Aucune équipe pour l'instant."},
+  playersBtn:{ar:'اللاعبون', fr:'Joueurs'}, closeBtn:{ar:'إغلاق', fr:'Fermer'}, deleteBtn:{ar:'حذف', fr:'Supprimer'},
+  noPlayersYet:{ar:'لا يوجد لاعبون بعد', fr:'Aucun joueur pour le moment'}, playerNamePh:{ar:'اسم اللاعب', fr:'Nom du joueur'},
+  newMatchTitle:{ar:'برمجة مباراة جديدة', fr:'Programmer un nouveau match'}, vsWord:{ar:'ضد', fr:'contre'},
+  timePh:{ar:'الوقت (مثال 15:00)', fr:'Heure (ex. 15:00)'}, venuePh:{ar:'الملعب', fr:'Terrain'},
+  roundPh:{ar:'الجولة/الدور (اختياري)', fr:'Journée / tour (optionnel)'},
+  stageGroup:{ar:'مرحلة المجموعات', fr:'Phase de groupes'}, stageKO:{ar:'دور إقصائي', fr:'Phase finale'},
+  scheduleMatchBtn:{ar:'برمجة المباراة', fr:'Programmer le match'},
+  matchesResultsTitle:{ar:'المباريات ونتائجها', fr:'Matchs et résultats'}, noMatchesAdmin:{ar:'لا توجد مباريات بعد.', fr:"Aucun match pour l'instant."},
+  saveBtn:{ar:'حفظ', fr:'Enregistrer'}, detailsBtn:{ar:'تفاصيل (أهداف/بطاقات)', fr:'Détails (buts/cartons)'},
+  closeDetailsBtn:{ar:'إغلاق التفاصيل', fr:'Fermer les détails'}, deleteMatchBtn:{ar:'حذف المباراة', fr:'Supprimer le match'},
+  addGoalTitle:{ar:'إضافة هدف', fr:'Ajouter un but'}, countPh:{ar:'عدد', fr:'Nb'}, noGoalsRow:{ar:'لا أهداف مسجلة', fr:'Aucun but enregistré'},
+  addCardTitle:{ar:'إضافة بطاقة', fr:'Ajouter un carton'}, yellowOpt:{ar:'صفراء', fr:'Jaune'}, redOpt:{ar:'حمراء', fr:'Rouge'},
+  noCardsRow:{ar:'لا بطاقات مسجلة', fr:'Aucun carton enregistré'},
+  newsAdminTitle:{ar:'الأخبار والإعلانات', fr:'Actualités et annonces'}, newsPh:{ar:'نص الإعلان', fr:"Texte de l'annonce"}, publishBtn:{ar:'نشر', fr:'Publier'},
+  noNewsAdmin:{ar:'لا توجد أخبار بعد.', fr:"Aucune actualité pour l'instant."},
+  seasonArchiveTitle:{ar:'الموسم والأرشيف', fr:'Saison et archives'}, currentSeasonLbl:{ar:'الموسم الحالي: ', fr:'Saison actuelle : '},
+  newSeasonPh:{ar:'اسم الموسم الجديد', fr:'Nom de la nouvelle saison'}, archiveBtnLbl:{ar:'أرشفة وبدء موسم جديد', fr:'Archiver et démarrer une nouvelle saison'},
+  archivedOn:{ar:'أُرشف في ', fr:'Archivée le '}, teamsWord:{ar:' فرق', fr:' équipes'}, viewStandingsBtn:{ar:'عرض الترتيب', fr:'Voir le classement'},
+  noArchivesYet:{ar:'لا توجد مواسم مؤرشفة بعد.', fr:'Aucune saison archivée pour le moment.'},
+  managersTitle:{ar:'مسيّرو البطولة', fr:'Organisateurs du tournoi'}, newManagerNamePh:{ar:'اسم المسير الجديد', fr:"Nom du nouvel organisateur"},
+  newManagerPinPh:{ar:'رمز سري', fr:'Code secret'},
+  logTitle:{ar:'سجل التعديلات', fr:'Journal des modifications'}, noLogYet:{ar:'لا يوجد سجل بعد.', fr:'Aucune activité pour le moment.'},
+  logoutBtnLbl:{ar:'خروج من نافذة المسير', fr:"Quitter l'espace organisateur"},
+  enterSeasonName:{ar:'أدخل اسم الموسم الجديد.', fr:'Veuillez saisir le nom de la nouvelle saison.'},
+  confirmArchive:{ar:'سيتم أرشفة الفرق والمباريات الحالية وبدء موسم جديد فارغ. متابعة؟', fr:"Les équipes et matchs actuels seront archivés et une nouvelle saison vide sera créée. Continuer ?"},
+  enterManagerFields:{ar:'أدخل الاسم والرمز.', fr:'Veuillez saisir le nom et le code.'},
+  confirmDeleteTeam:{ar:'حذف هذا الفريق؟ سيتم حذف جميع مبارياته أيضاً.', fr:'Supprimer cette équipe ? Tous ses matchs seront également supprimés.'},
+  confirmDeleteMatch:{ar:'حذف هذه المباراة؟', fr:'Supprimer ce match ?'},
+  chooseTwoTeams:{ar:'اختر فريقين مختلفين.', fr:'Choisissez deux équipes différentes.'},
+  chooseDate:{ar:'حدد تاريخ المباراة.', fr:'Veuillez choisir la date du match.'},
+
+  modalClose:{ar:'إغلاق ✕', fr:'Fermer ✕'}, modalSquad:{ar:'التشكيلة', fr:'Effectif'}, modalNoSquad:{ar:'لم تُضَف تشكيلة بعد', fr:"Aucun effectif ajouté pour l'instant"},
+  modalUpcoming:{ar:'المباريات القادمة', fr:'Matchs à venir'}, modalNoUpcoming:{ar:'لا مباريات قادمة', fr:'Aucun match à venir'},
+  modalPast:{ar:'المباريات السابقة', fr:'Matchs précédents'}, modalNoPast:{ar:'لا مباريات سابقة', fr:'Aucun match précédent'},
+  archiveStandingsTitle:{ar:'ترتيب ', fr:'Classement '},
+
+  shareIntro:{ar:'🏆 بطولة مدارس غرب وهران — ', fr:"🏆 Tournoi des écoles de l'Ouest d'Oran — "},
+  shareStandingsLbl:{ar:'الترتيب:\n', fr:'Classement :\n'}, ptsWord:{ar:' نقطة', fr:' pts'},
+
+  groupLbl:{ar:'المجموعة', fr:'Groupe'}, groupPh:{ar:'المجموعة (اختياري، مثال: أ)', fr:'Groupe (optionnel, ex. A)'},
+  allGroups:{ar:'كل المجموعات', fr:'Tous les groupes'},
+
+  backupTitle:{ar:'نسخة احتياطية', fr:'Sauvegarde'},
+  backupDesc:{ar:'صدّر كل بيانات البطولة إلى ملف تقدر تحتفظ به أو تستعمله لاسترجاع البيانات لاحقاً.', fr:'Exportez toutes les données du tournoi dans un fichier que vous pouvez conserver ou utiliser pour restaurer les données plus tard.'},
+  exportBackupBtn:{ar:'تصدير نسخة احتياطية', fr:'Exporter une sauvegarde'},
+  importBackupBtn:{ar:'استيراد نسخة احتياطية', fr:'Importer une sauvegarde'},
+  importWarning:{ar:'سيتم استبدال جميع البيانات الحالية بالكامل بالنسخة المستوردة. متابعة؟', fr:'Toutes les données actuelles seront entièrement remplacées par la sauvegarde importée. Continuer ?'},
+  importSuccess:{ar:'تم استيراد البيانات بنجاح.', fr:'Données importées avec succès.'},
+  importError:{ar:'ملف غير صالح.', fr:'Fichier invalide.'}
+};
+function t(k){ return (DICT[k] && DICT[k][ui.lang]) || k; }
+
+let state = { season:'الموسم 2026', teams: [], matches: [], news: [], admins: [], log: [], archives: [] };
+let ui = { lang:'ar', tab: 'standings', scheduleSub: 'daily', scorersSub:'top', printSub: 'sheet', isAdmin: false, adminName:'', adminError: '', expandedMatch:null, expandedTeam:null };
+const STORAGE_KEY = 'tournament-data-v1';
+
+function esc(s){ return (s===undefined||s===null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function uid(p){ return p+Date.now()+Math.random().toString(36).slice(2,6); }
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+
+async function loadData(){
+  try{
+    const res = await storageAdapter.get(STORAGE_KEY);
+    if(res && res.value){
+      const p = JSON.parse(res.value);
+      state.season = p.season || state.season;
+      state.teams = p.teams || []; state.matches = p.matches || []; state.news = p.news || [];
+      state.admins = p.admins || []; state.log = p.log || []; state.archives = p.archives || [];
+    }
+  }catch(e){}
+  if(state.admins.length===0){ state.admins.push({pin:'2580', name:'المسير الرئيسي'}); }
+}
+async function saveData(){
+  try{ await storageAdapter.set(STORAGE_KEY, JSON.stringify(state)); }
+  catch(e){ console.error(e); alert(ui.lang==='fr' ? "Une erreur est survenue lors de l'enregistrement." : 'حدث خطأ أثناء حفظ البيانات، حاول مرة أخرى.'); }
+}
+function addLog(actionAr, actionFr){ state.log.unshift({ts:Date.now(), admin: ui.adminName||'—', action: ui.lang==='fr' ? (actionFr||actionAr) : actionAr}); state.log = state.log.slice(0,40); }
+
+function formatDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso+'T00:00:00');
+  if(ui.lang==='fr'){
+    const days=['Dimanche','Lundi','Mardi','Mercredi','Jeudi','Vendredi','Samedi'];
+    const months=['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
+    return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+  }
+  const days=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  const months=['جانفي','فيفري','مارس','أفريل','ماي','جوان','جويلية','أوت','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+  return `${days[d.getDay()]} ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+function getWeekRange(dateStr){
+  const d = new Date(dateStr+'T00:00:00');
+  const diffToSat = (d.getDay()+1)%7;
+  const start = new Date(d); start.setDate(d.getDate()-diffToSat);
+  const end = new Date(start); end.setDate(start.getDate()+6);
+  return {start:start.toISOString().slice(0,10), end:end.toISOString().slice(0,10)};
+}
+
+function teamName(id, teamsArg){ const teams = teamsArg||state.teams; const tm = teams.find(t=>t.id===id); return tm?tm.name:'—'; }
+function teamColor(id, teamsArg){ const teams = teamsArg||state.teams; const tm = teams.find(t=>t.id===id); return (tm&&tm.color)||'#4C8EFF'; }
+
+function computeStandings(teamsArg, matchesArg){
+  const teams = teamsArg||state.teams, matches = matchesArg||state.matches;
+  const map = {};
+  teams.forEach(tm=>{ map[tm.id] = {id:tm.id, name:tm.name, color:tm.color, played:0, won:0, drawn:0, lost:0, gf:0, ga:0, pts:0}; });
+  matches.forEach(m=>{
+    if(m.status!=='finished') return;
+    const h = map[m.home], a = map[m.away];
+    if(!h||!a) return;
+    h.played++; a.played++; h.gf+=m.homeScore; h.ga+=m.awayScore; a.gf+=m.awayScore; a.ga+=m.homeScore;
+    if(m.homeScore>m.awayScore){ h.won++; h.pts+=3; a.lost++; }
+    else if(m.homeScore<m.awayScore){ a.won++; a.pts+=3; h.lost++; }
+    else { h.drawn++; a.drawn++; h.pts+=1; a.pts+=1; }
+  });
+  const arr = Object.values(map);
+  arr.sort((x,y)=>{ if(y.pts!==x.pts) return y.pts-x.pts; const gx=x.gf-x.ga, gy=y.gf-y.ga; if(gy!==gx) return gy-gx; return y.gf-x.gf; });
+  return arr;
+}
+function computeTopScorers(){
+  const acc = {};
+  state.matches.forEach(m=>{
+    (m.events||[]).filter(e=>e.type==='goal').forEach(e=>{
+      const teamId = e.side==='home'?m.home:m.away;
+      const key = e.player+'|'+teamId;
+      if(!acc[key]) acc[key] = {player:e.player, teamId, goals:0};
+      acc[key].goals += (e.count||1);
+    });
+  });
+  return Object.values(acc).sort((a,b)=>b.goals-a.goals).slice(0,20);
+}
+function computeCardsTable(){
+  const map = {};
+  state.teams.forEach(tm=>{ map[tm.id] = {id:tm.id, name:tm.name, color:tm.color, yellow:0, red:0}; });
+  state.matches.forEach(m=>{
+    (m.events||[]).forEach(e=>{
+      if(e.type!=='yellow' && e.type!=='red') return;
+      const teamId = e.side==='home'?m.home:m.away;
+      if(!map[teamId]) return;
+      if(e.type==='yellow') map[teamId].yellow++; else map[teamId].red++;
+    });
+  });
+  const arr = Object.values(map).map(tm=>({...tm, pts:tm.yellow*1+tm.red*3}));
+  arr.sort((a,b)=>a.pts-b.pts);
+  return arr;
+}
+function nextUpcomingMatch(){
+  const now = Date.now();
+  const list = state.matches.filter(m=>m.status!=='finished').map(m=>{
+    const dt = new Date(m.date+'T'+(m.time||'00:00')+':00').getTime();
+    return {m, dt};
+  }).filter(x=>x.dt>=now-3600000).sort((a,b)=>a.dt-b.dt);
+  return list.length? list[0] : null;
+}
+function matchLine(m){
+  const status = m.status==='finished';
+  return `
+    <div class="match-card">
+      <div class="teams">
+        <div class="t" data-open-team="${m.home}"><span class="dot" style="background:${esc(teamColor(m.home))}"></span>${esc(teamName(m.home))}</div>
+        <div class="t" data-open-team="${m.away}"><span class="dot" style="background:${esc(teamColor(m.away))}"></span>${esc(teamName(m.away))}</div>
+        <div class="meta">${m.time?m.time+' · ':''}<span class="venue">${t('venueLbl')}${m.venue?esc(m.venue):t('venueUnset')}</span>${m.round?' · '+esc(m.round):''}${m.stage==='knockout'?' <span class="badge ko">'+t('koBadge')+'</span>':''}</div>
+      </div>
+      <div class="score ${status?'':'tbd'}">${status ? m.homeScore+' - '+m.awayScore : t('notPlayed')}</div>
+    </div>`;
+}
+function groupByDate(matches){
+  const groups = {};
+  matches.forEach(m=>{ (groups[m.date]=groups[m.date]||[]).push(m); });
+  return Object.keys(groups).sort().map(date=>({date, list:groups[date].sort((a,b)=>(a.time||'').localeCompare(b.time||''))}));
+}
+function shareText(text){ window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank'); }
+
+function exportBackup(){
+  const blob = new Blob([JSON.stringify(state, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tournoi-backup-'+todayISO()+'.json';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+function importBackupFile(file){
+  const reader = new FileReader();
+  reader.onload = async ()=>{
+    let parsed;
+    try{ parsed = JSON.parse(reader.result); }
+    catch(e){ alert(t('importError')); return; }
+    if(!confirm(t('importWarning'))) return;
+    state.season = parsed.season || state.season;
+    state.teams = parsed.teams || [];
+    state.matches = parsed.matches || [];
+    state.news = parsed.news || [];
+    state.admins = (parsed.admins && parsed.admins.length) ? parsed.admins : state.admins;
+    state.log = parsed.log || [];
+    state.archives = parsed.archives || [];
+    addLog('استورد نسخة احتياطية', 'Sauvegarde importée');
+    await saveData();
+    ui.isAdmin = true;
+    render();
+    alert(t('importSuccess'));
+  };
+  reader.readAsText(file);
+}
+
+function applyLangDom(){
+  document.getElementById('htmlRoot').setAttribute('dir', ui.lang==='fr'?'ltr':'rtl');
+  document.getElementById('htmlRoot').setAttribute('lang', ui.lang);
+  document.getElementById('appTitleH1').textContent = t('appTitle');
+  document.getElementById('appSubtitleDiv').textContent = t('appSubtitle');
+  document.querySelectorAll('#langsw button').forEach(b=>b.classList.toggle('active', b.dataset.lang===ui.lang));
+  const labels = {standings:'tabStandings', schedule:'tabSchedule', scorers:'tabScorers', news:'tabNews', print:'tabPrint', admin:'tabAdmin'};
+  document.querySelectorAll('nav.tabbar button').forEach(b=>{ b.textContent = t(labels[b.dataset.tab]); });
+}
+
+function render(){
+  applyLangDom();
+  document.getElementById('seasonBadge').textContent = state.season;
+  document.getElementById('tabbar').style.display='flex';
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.tab===ui.tab));
+  const main = document.getElementById('main');
+  if(ui.tab==='standings') main.innerHTML = renderStandings();
+  else if(ui.tab==='schedule') main.innerHTML = renderSchedule();
+  else if(ui.tab==='scorers') main.innerHTML = renderScorers();
+  else if(ui.tab==='news') main.innerHTML = renderNews();
+  else if(ui.tab==='print') main.innerHTML = renderPrint();
+  else if(ui.tab==='admin') main.innerHTML = renderAdmin();
+  attachHandlers();
+  updateCountdown();
+}
+
+function renderStandings(){
+  const groupsPresent = [...new Set(state.teams.map(tm=>tm.group).filter(Boolean))].sort();
+  let groupTabs = '';
+  let standingsTeams = state.teams;
+  if(groupsPresent.length>0){
+    const cur = ui.standingsGroup || 'all';
+    groupTabs = `<div class="subtabs">
+      <button data-stgroup="all" class="${cur==='all'?'active':''}">${t('allGroups')}</button>
+      ${groupsPresent.map(g=>`<button data-stgroup="${esc(g)}" class="${cur===g?'active':''}">${esc(g)}</button>`).join('')}
+    </div>`;
+    if(cur!=='all') standingsTeams = state.teams.filter(tm=>tm.group===cur);
+  }
+  const standings = computeStandings(standingsTeams);
+  const next = nextUpcomingMatch();
+  let banner = '';
+  if(next){
+    banner = `<div class="banner"><div><div class="lbl">${t('nextMatch')}</div>
+      <div class="teams">${esc(teamName(next.m.home))} × ${esc(teamName(next.m.away))}</div></div>
+      <div class="cd" id="countdownBox" data-ts="${next.dt}">--:--:--</div></div>`;
+  }
+  const toolbar = state.teams.length ? `<div class="toolbar"><button class="ghost" id="shareStandings">${t('share')}</button></div>` : '';
+  if(state.teams.length===0){
+    return banner+groupTabs+toolbar+`<div class="empty-note">${t('noTeamsYet')}</div>`;
+  }
+  const rows = standings.map((tm,i)=>`
+    <tr class="${i<3?'top3':''}">
+      <td>${i+1}</td>
+      <td class="name-col" data-open-team="${tm.id}"><span class="dot" style="background:${esc(tm.color||'#4C8EFF')}"></span>${esc(tm.name)}</td>
+      <td>${tm.played}</td><td>${tm.won}</td><td>${tm.drawn}</td><td>${tm.lost}</td>
+      <td>${tm.gf}</td><td>${tm.ga}</td><td>${tm.gf-tm.ga}</td><td class="pts">${tm.pts}</td>
+    </tr>`).join('');
+  return banner+groupTabs+toolbar+`
+    <table class="standings"><thead><tr>
+      <th>${t('colRank')}</th><th class="name-col">${t('colTeam')}</th><th>${t('colPlayed')}</th><th>${t('colWon')}</th><th>${t('colDrawn')}</th><th>${t('colLost')}</th><th>${t('colFor')}</th><th>${t('colAgainst')}</th><th>${t('colDiff')}</th><th>${t('colPts')}</th>
+    </tr></thead><tbody>${rows}</tbody></table>`;
+}
+function updateCountdown(){
+  const box = document.getElementById('countdownBox');
+  if(!box) return;
+  const ts = parseInt(box.dataset.ts,10);
+  const diff = ts - Date.now();
+  if(diff<=0){ box.textContent=t('now'); return; }
+  const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000), m = Math.floor((diff%3600000)/60000);
+  box.textContent = d>0 ? `${d}${t('cdDay')} ${h}${t('cdHour')} ${m}${t('cdMin')}` : `${h}${t('cdHour')} ${m}${t('cdMin')}`;
+}
+setInterval(updateCountdown, 30000);
+
+function renderSchedule(){
+  const subs = [['daily','subDaily'],['weekly','subWeekly'],['monthly','subMonthly'],['general','subGeneral'],['knockout','subKnockout']];
+  const subtabs = subs.map(([k,lk])=>`<button data-sched="${k}" class="${ui.scheduleSub===k?'active':''}">${t(lk)}</button>`).join('');
+
+  if(ui.scheduleSub==='knockout'){
+    const ko = state.matches.filter(m=>m.stage==='knockout').sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+    if(ko.length===0) return `<div class="subtabs">${subtabs}</div><div class="empty-note">${t('noKnockoutYet')}</div>`;
+    const rounds = {}; const order=[];
+    ko.forEach(m=>{ const r = m.round||t('undefinedRound'); if(!rounds[r]){rounds[r]=[]; order.push(r);} rounds[r].push(m); });
+    const body = order.map(r=>`<div class="day-group"><h3>${esc(r)}</h3>${rounds[r].map(matchLine).join('')}</div>`).join('');
+    return `<div class="subtabs">${subtabs}</div>${body}`;
+  }
+  let controls='', list=[];
+  const val = ui.scheduleValue || todayISO();
+  if(ui.scheduleSub==='daily'){
+    controls = `<div class="field-row"><label>${t('lblDate')}</label><input type="date" id="schedDate" value="${val}"></div>`;
+    list = state.matches.filter(m=>m.date===val);
+  } else if(ui.scheduleSub==='weekly'){
+    controls = `<div class="field-row"><label>${t('lblWeekDay')}</label><input type="date" id="schedDate" value="${val}"></div>`;
+    const {start,end} = getWeekRange(val);
+    list = state.matches.filter(m=>m.date>=start && m.date<=end);
+  } else if(ui.scheduleSub==='monthly'){
+    const monthVal = (ui.scheduleValue||todayISO()).slice(0,7);
+    controls = `<div class="field-row"><label>${t('lblMonth')}</label><input type="month" id="schedMonth" value="${monthVal}"></div>`;
+    list = state.matches.filter(m=>m.date.slice(0,7)===monthVal);
+  } else { list = state.matches.slice(); }
+  list.sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+  const groups = groupByDate(list);
+  const body = groups.length===0 ? `<div class="empty-note">${t('noMatchesPeriod')}</div>`
+    : groups.map(g=>`<div class="day-group"><h3>${formatDate(g.date)}</h3>${g.list.map(matchLine).join('')}</div>`).join('');
+  return `<div class="subtabs">${subtabs}</div>${controls}${body}`;
+}
+
+function renderScorers(){
+  const subs = [['top','scTop'],['gk','scGk'],['fair','scFair']];
+  const subtabs = subs.map(([k,lk])=>`<button data-scsub="${k}" class="${ui.scorersSub===k?'active':''}">${t(lk)}</button>`).join('');
+  if(ui.scorersSub==='top'){
+    const top = computeTopScorers();
+    if(top.length===0) return `<div class="subtabs">${subtabs}</div><div class="empty-note">${t('noGoalsYet')}</div>`;
+    const rows = top.map((tm,i)=>`<tr><td>${i+1}</td><td class="name-col">${esc(tm.player)}</td><td>${esc(teamName(tm.teamId))}</td><td class="pts">${tm.goals}</td></tr>`).join('');
+    return `<div class="subtabs">${subtabs}</div><table class="standings"><thead><tr><th>${t('colRank')}</th><th class="name-col">${t('colPlayer')}</th><th>${t('colTeam')}</th><th>${t('colGoals')}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  if(ui.scorersSub==='gk'){
+    const st = computeStandings().filter(tm=>tm.played>0).sort((a,b)=>a.ga-b.ga).slice(0,10);
+    if(st.length===0) return `<div class="subtabs">${subtabs}</div><div class="empty-note">${t('noFinishedYet')}</div>`;
+    const rows = st.map((tm,i)=>`<tr><td>${i+1}</td><td class="name-col">${esc(tm.name)}</td><td>${tm.played}</td><td class="pts">${tm.ga}</td></tr>`).join('');
+    return `<div class="subtabs">${subtabs}</div><table class="standings"><thead><tr><th>${t('colRank')}</th><th class="name-col">${t('colTeam')}</th><th>${t('colPlayed')}</th><th>${t('colConceded')}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  const fair = computeCardsTable();
+  if(state.teams.length===0) return `<div class="subtabs">${subtabs}</div><div class="empty-note">${t('noTeamsShort')}</div>`;
+  const rows = fair.map((tm,i)=>`<tr><td>${i+1}</td><td class="name-col">${esc(tm.name)}</td><td>${tm.yellow}</td><td>${tm.red}</td><td class="pts">${tm.pts}</td></tr>`).join('');
+  return `<div class="subtabs">${subtabs}</div><table class="standings"><thead><tr><th>${t('colRank')}</th><th class="name-col">${t('colTeam')}</th><th>${t('colYellow')}</th><th>${t('colRed')}</th><th>${t('colPts')}</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderNews(){
+  if(state.news.length===0) return `<div class="empty-note">${t('noNewsYet')}</div>`;
+  return state.news.slice().sort((a,b)=>b.ts-a.ts).map(n=>`<div class="news-item"><div class="d">${formatDate(n.date)}</div><div class="t">${esc(n.text)}</div></div>`).join('');
+}
+
+function renderPrint(){
+  const subs = [['sheet','psSheet'],['schedule','psSchedule']];
+  const subtabs = subs.map(([k,lk])=>`<button data-psub="${k}" class="${ui.printSub===k?'active':''}">${t(lk)}</button>`).join('');
+  if(ui.printSub==='sheet'){
+    if(state.matches.length===0) return `<div class="subtabs">${subtabs}</div><div class="empty-note">${t('noMatchesForSheet')}</div>`;
+    const options = state.matches.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(m=>`<option value="${m.id}" ${ui.selectedMatch===m.id?'selected':''}>${esc(teamName(m.home))} × ${esc(teamName(m.away))} — ${formatDate(m.date)}</option>`).join('');
+    const mId = ui.selectedMatch || state.matches[0].id;
+    const m = state.matches.find(x=>x.id===mId);
+    return `<div class="subtabs">${subtabs}</div>
+      <div class="field-row"><select id="matchSelect" style="flex:1">${options}</select></div>
+      <div class="print-preview" id="sheetPreview">${buildMatchSheetHTML(m)}</div>
+      <div class="field-row"><button class="primary" id="printSheetBtn">${t('printSheetBtn')}</button></div>`;
+  }
+  const period = ui.printPeriod||'daily';
+  const val = ui.printValue||todayISO();
+  let list=[], label='';
+  if(period==='daily'){ list=state.matches.filter(m=>m.date===val); label=formatDate(val); }
+  else if(period==='weekly'){ const {start,end}=getWeekRange(val); list=state.matches.filter(m=>m.date>=start&&m.date<=end); label=`${t('fromTo')}${formatDate(start)}${t('toWord')}${formatDate(end)}`; }
+  else { list=state.matches.slice(); label=t('seasonAll'); }
+  list.sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||'')));
+  return `<div class="subtabs">${subtabs}</div>
+    <div class="field-row">
+      <select id="periodSelect">
+        <option value="daily" ${period==='daily'?'selected':''}>${t('subDaily')}</option>
+        <option value="weekly" ${period==='weekly'?'selected':''}>${t('subWeekly')}</option>
+        <option value="general" ${period==='general'?'selected':''}>${t('subGeneral')}</option>
+      </select>
+      ${period!=='general' ? `<input type="date" id="periodDate" value="${val}">` : ''}
+    </div>
+    <div class="print-preview" id="schedulePreview">${buildScheduleSheetHTML(list,label)}</div>
+    <div class="field-row"><button class="primary" id="printSchedBtn">${t('printSchedBtn')}</button></div>`;
+}
+function buildMatchSheetHTML(m){
+  if(!m) return '';
+  return `
+    <h3>${t('appTitle')}</h3>
+    <div class="pp-sub">${t('officialSheet')} ${m.round?' — '+esc(m.round):''}</div>
+    <table>
+      <tr><td>${t('lblDate')}</td><td>${formatDate(m.date)}</td><td>${t('time')}</td><td>${esc(m.time||'—')}</td></tr>
+      <tr><td>${t('venue')}</td><td colspan="3">${esc(m.venue||t('venueUnset'))}</td></tr>
+    </table>
+    <div class="sheet-grid">
+      <div class="sheet-box"><h4>${esc(teamName(m.home))}</h4><div class="sheet-line"></div><div class="sheet-line"></div><div class="sheet-line"></div><div class="sheet-line"></div></div>
+      <div class="sheet-box"><h4>${esc(teamName(m.away))}</h4><div class="sheet-line"></div><div class="sheet-line"></div><div class="sheet-line"></div><div class="sheet-line"></div></div>
+    </div>
+    <table style="margin-top:14px">
+      <tr><td>${t('finalResult')}</td><td style="width:70%">${m.status==='finished'?m.homeScore+' — '+m.awayScore:'____________'}</td></tr>
+      <tr><td>${t('refNotes')}</td><td>&nbsp;</td></tr>
+    </table>
+    <div class="sig-row">
+      <div class="line">${t('refSig')}</div>
+      <div class="line">${t('mgrSig')} ${esc(teamName(m.home))}</div>
+      <div class="line">${t('mgrSig')} ${esc(teamName(m.away))}</div>
+    </div>`;
+}
+function buildScheduleSheetHTML(list,label){
+  const rows = list.map(m=>`<tr><td>${formatDate(m.date)}</td><td>${esc(m.time||'—')}</td><td>${esc(teamName(m.home))}</td><td>${esc(teamName(m.away))}</td><td>${esc(m.venue||t('venueUnset'))}</td><td>${esc(m.round||'—')}</td></tr>`).join('');
+  return `<h3>${t('appTitle')}</h3><div class="pp-sub">${t('scheduleTitle')}${label}</div>
+    <table><tr><th>${t('lblDate')}</th><th>${t('time')}</th><th>${t('colTeam1')}</th><th>${t('colTeam2')}</th><th>${t('venue')}</th><th>${t('colRound')}</th></tr>${rows||'<tr><td colspan="6">'+t('noMatchesTable')+'</td></tr>'}</table>`;
+}
+
+function renderAdmin(){
+  if(!ui.isAdmin){
+    return `<div class="admin-gate">
+      <p>${t('adminGateText')}</p>
+      <div class="field-row" style="justify-content:center"><input type="password" id="pinInput" placeholder="${t('pinPlaceholder')}" style="max-width:160px;text-align:center"><button class="primary" id="pinBtn">${t('enterBtn')}</button></div>
+      ${ui.adminError?`<div class="err">${esc(ui.adminError)}</div>`:''}
+    </div>`;
+  }
+  const teamOptions = state.teams.map(tm=>`<option value="${tm.id}">${esc(tm.name)}</option>`).join('');
+
+  const teamRows = state.teams.map(tm=>{
+    const expanded = ui.expandedTeam===tm.id;
+    const players = (tm.players||[]).map(p=>`<span class="player-chip">${esc(p.name)}<button data-del-player="${tm.id}|${p.id}">✕</button></span>`).join('') || `<span style="font-size:11px;color:var(--dim)">${t('noPlayersYet')}</span>`;
+    return `<div class="list-row" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <div class="info"><b><span class="dot" style="background:${esc(tm.color||'#4C8EFF')}"></span>${esc(tm.name)}</b>${tm.group?` <span class="badge ko">${esc(tm.group)}</span>`:''}</div>
+        <div style="display:flex;gap:6px">
+          <button class="ghost" data-toggle-team="${tm.id}">${expanded?t('closeBtn'):t('playersBtn')}</button>
+          <button class="danger" data-del-team="${tm.id}">${t('deleteBtn')}</button>
+        </div>
+      </div>
+      ${expanded?`<div class="squad-box">
+        <div class="mini-row">
+          <label style="font-size:11px;color:var(--dim)">${t('groupLbl')}</label>
+          <input type="text" id="editGroup_${tm.id}" value="${esc(tm.group||'')}" style="max-width:100px">
+          <button class="ghost" data-save-group="${tm.id}">${t('saveBtn')}</button>
+        </div>
+        <div>${players}</div>
+        <div class="mini-row" style="margin-top:8px">
+          <input type="text" id="newPlayer_${tm.id}" placeholder="${t('playerNamePh')}">
+          <button class="ghost" data-add-player="${tm.id}">${t('addBtn')}</button>
+        </div>
+      </div>`:''}
+    </div>`;
+  }).join('') || `<div class="empty-note">${t('noTeamsAdmin')}</div>`;
+
+  const matchRows = state.matches.slice().sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).map(m=>{
+    const expanded = ui.expandedMatch===m.id;
+    const goals = (m.events||[]).filter(e=>e.type==='goal');
+    const cards = (m.events||[]).filter(e=>e.type!=='goal');
+    const goalsHTML = goals.map(e=>`<div class="ev-item"><span>⚽ ${esc(e.player)} (${e.side==='home'?esc(teamName(m.home)):esc(teamName(m.away))}) ×${e.count||1}</span><button class="danger" data-del-event="${m.id}|${e.id}">${t('deleteBtn')}</button></div>`).join('') || `<div style="font-size:11px;color:var(--dim)">${t('noGoalsRow')}</div>`;
+    const cardsHTML = cards.map(e=>`<div class="ev-item"><span>${e.type==='yellow'?'🟨':'🟥'} ${esc(e.player)} (${e.side==='home'?esc(teamName(m.home)):esc(teamName(m.away))})</span><button class="danger" data-del-event="${m.id}|${e.id}">${t('deleteBtn')}</button></div>`).join('') || `<div style="font-size:11px;color:var(--dim)">${t('noCardsRow')}</div>`;
+    return `<div class="list-row" style="flex-direction:column;align-items:stretch">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;width:100%;flex-wrap:wrap;gap:6px">
+        <div class="info">
+          <b>${esc(teamName(m.home))} × ${esc(teamName(m.away))}</b>
+          <span class="m">${formatDate(m.date)} ${m.time?'· '+esc(m.time):''} · ${t('venueLbl')}${esc(m.venue||t('venueUnset'))} ${m.round?'· '+esc(m.round):''}
+            <span class="badge ${m.status==='finished'?'done':'pending'}">${m.status==='finished'?t('doneBadge'):t('notPlayed')}</span>
+            ${m.stage==='knockout'?'<span class="badge ko">'+t('koBadge')+'</span>':''}
+          </span>
+        </div>
+        <div class="result-inputs">
+          <input type="number" min="0" placeholder="0" data-score-home="${m.id}" value="${m.homeScore??''}">
+          <span>-</span>
+          <input type="number" min="0" placeholder="0" data-score-away="${m.id}" value="${m.awayScore??''}">
+          <button class="ghost" data-save-result="${m.id}">${t('saveBtn')}</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:6px">
+        <button class="ghost" data-toggle-match="${m.id}">${expanded?t('closeDetailsBtn'):t('detailsBtn')}</button>
+        <button class="danger" data-del-match="${m.id}">${t('deleteMatchBtn')}</button>
+      </div>
+      ${expanded?`<div class="details-box">
+        <h4>${t('addGoalTitle')}</h4>
+        <div class="mini-row">
+          <select id="goalSide_${m.id}"><option value="home">${esc(teamName(m.home))}</option><option value="away">${esc(teamName(m.away))}</option></select>
+          <input type="text" id="goalPlayer_${m.id}" placeholder="${t('playerNamePh')}" style="flex:2">
+          <input type="number" id="goalCount_${m.id}" placeholder="${t('countPh')}" value="1" min="1" style="width:50px;flex:none">
+          <button class="ghost" data-add-goal="${m.id}">${t('addBtn')}</button>
+        </div>
+        ${goalsHTML}
+        <h4>${t('addCardTitle')}</h4>
+        <div class="mini-row">
+          <select id="cardSide_${m.id}"><option value="home">${esc(teamName(m.home))}</option><option value="away">${esc(teamName(m.away))}</option></select>
+          <input type="text" id="cardPlayer_${m.id}" placeholder="${t('playerNamePh')}" style="flex:2">
+          <select id="cardType_${m.id}" style="flex:none;width:80px"><option value="yellow">${t('yellowOpt')}</option><option value="red">${t('redOpt')}</option></select>
+          <button class="ghost" data-add-card="${m.id}">${t('addBtn')}</button>
+        </div>
+        ${cardsHTML}
+      </div>`:''}
+    </div>`;
+  }).join('') || `<div class="empty-note">${t('noMatchesAdmin')}</div>`;
+
+  const newsRows = state.news.slice().sort((a,b)=>b.ts-a.ts).map(n=>`<div class="list-row"><div class="info"><b>${formatDate(n.date)}</b><span class="m">${esc(n.text)}</span></div><button class="danger" data-del-news="${n.id}">${t('deleteBtn')}</button></div>`).join('') || `<div class="empty-note">${t('noNewsAdmin')}</div>`;
+  const adminRows = state.admins.map(a=>`<div class="list-row"><div class="info"><b>${esc(a.name)}</b></div></div>`).join('');
+  const archiveRows = state.archives.slice().reverse().map(ar=>`<div class="list-row"><div class="info"><b>${esc(ar.season)}</b><span class="m">${t('archivedOn')}${formatDate(ar.archivedAt)} · ${ar.teams.length}${t('teamsWord')}</span></div><button class="ghost" data-view-archive="${esc(ar.season)}">${t('viewStandingsBtn')}</button></div>`).join('') || `<div class="empty-note">${t('noArchivesYet')}</div>`;
+  const logRows = state.log.slice(0,15).map(l=>`<div class="log-item"><b>${esc(l.admin)}</b> — ${esc(l.action)} <span style="opacity:.6">(${new Date(l.ts).toLocaleString(ui.lang==='fr'?'fr-FR':'ar')})</span></div>`).join('') || `<div class="empty-note">${t('noLogYet')}</div>`;
+
+  return `
+    <div class="admin-name">${t('welcome')}<b>${esc(ui.adminName)}</b></div>
+    <section class="card"><h2>${t('addTeamTitle')}</h2>
+      <div class="field-row"><input type="color" id="newTeamColor" value="#4C8EFF"><input type="text" id="newTeamName" placeholder="${t('teamNamePh')}"><input type="text" id="newTeamGroup" placeholder="${t('groupPh')}" style="max-width:150px"><button class="primary" id="addTeamBtn">${t('addBtn')}</button></div>
+      ${teamRows}
+    </section>
+    <section class="card"><h2>${t('newMatchTitle')}</h2>
+      <div class="field-row"><select id="matchHome">${teamOptions}</select><span style="font-size:12px;color:var(--dim)">${t('vsWord')}</span><select id="matchAway">${teamOptions}</select></div>
+      <div class="field-row"><input type="date" id="matchDate" value="${todayISO()}"><input type="text" id="matchTime" placeholder="${t('timePh')}"></div>
+      <div class="field-row"><input type="text" id="matchVenue" placeholder="${t('venuePh')}"><input type="text" id="matchRound" placeholder="${t('roundPh')}"></div>
+      <div class="field-row"><select id="matchStage"><option value="group">${t('stageGroup')}</option><option value="knockout">${t('stageKO')}</option></select></div>
+      <div class="field-row"><button class="primary" id="addMatchBtn">${t('scheduleMatchBtn')}</button></div>
+    </section>
+    <section class="card"><h2>${t('matchesResultsTitle')}</h2>${matchRows}</section>
+    <section class="card"><h2>${t('newsAdminTitle')}</h2>
+      <div class="field-row"><input type="text" id="newNewsText" placeholder="${t('newsPh')}"><button class="primary" id="addNewsBtn">${t('publishBtn')}</button></div>
+      ${newsRows}
+    </section>
+    <section class="card"><h2>${t('seasonArchiveTitle')}</h2>
+      <div class="field-row"><label>${t('currentSeasonLbl')}<b>${esc(state.season)}</b></label></div>
+      <div class="field-row"><input type="text" id="newSeasonName" placeholder="${t('newSeasonPh')}"><button class="ghost" id="archiveBtn">${t('archiveBtnLbl')}</button></div>
+      ${archiveRows}
+    </section>
+    <section class="card"><h2>${t('managersTitle')}</h2>
+      ${adminRows}
+      <div class="field-row" style="margin-top:10px"><input type="text" id="newAdminName" placeholder="${t('newManagerNamePh')}"><input type="password" id="newAdminPin" placeholder="${t('newManagerPinPh')}" style="max-width:100px"><button class="ghost" id="addAdminBtn">${t('addBtn')}</button></div>
+    </section>
+    <section class="card"><h2>${t('logTitle')}</h2>${logRows}</section>
+    <section class="card"><h2>${t('backupTitle')}</h2>
+      <div style="font-size:12.5px;color:var(--dim);margin-bottom:12px">${t('backupDesc')}</div>
+      <div class="field-row">
+        <button class="primary" id="exportBackupBtn">${t('exportBackupBtn')}</button>
+        <button class="ghost" id="importBackupBtn">${t('importBackupBtn')}</button>
+        <input type="file" id="importBackupInput" accept="application/json" style="display:none">
+      </div>
+    </section>
+    <div class="field-row"><button class="ghost" id="logoutBtn">${t('logoutBtnLbl')}</button></div>
+  `;
+}
+
+function openTeamModal(teamId){
+  const tm = state.teams.find(x=>x.id===teamId);
+  if(!tm) return;
+  const upcoming = state.matches.filter(m=>(m.home===teamId||m.away===teamId)&&m.status!=='finished').sort((a,b)=>(a.date+(a.time||'')).localeCompare(b.date+(b.time||''))).slice(0,5);
+  const past = state.matches.filter(m=>(m.home===teamId||m.away===teamId)&&m.status==='finished').sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||''))).slice(0,5);
+  const players = (tm.players||[]).map(p=>`<span class="player-chip">${esc(p.name)}</span>`).join('') || `<span style="font-size:12px;color:var(--dim)">${t('modalNoSquad')}</span>`;
+  const upHTML = upcoming.map(matchLine).join('') || `<div class="empty-note" style="padding:14px 0">${t('modalNoUpcoming')}</div>`;
+  const pastHTML = past.map(matchLine).join('') || `<div class="empty-note" style="padding:14px 0">${t('modalNoPast')}</div>`;
+  document.getElementById('teamModalBox').innerHTML = `
+    <div class="close-row"><button class="ghost" id="closeTeamModal">${t('modalClose')}</button></div>
+    <h2><span class="dot" style="background:${esc(tm.color||'#4C8EFF')}"></span>${esc(tm.name)}</h2>
+    <h4 style="font-size:11.5px;color:var(--dim);margin:14px 0 8px">${t('modalSquad')}</h4>
+    <div>${players}</div>
+    <h4 style="font-size:11.5px;color:var(--dim);margin:16px 0 4px">${t('modalUpcoming')}</h4>${upHTML}
+    <h4 style="font-size:11.5px;color:var(--dim);margin:16px 0 4px">${t('modalPast')}</h4>${pastHTML}
+  `;
+  document.getElementById('teamModal').classList.add('open');
+  document.getElementById('closeTeamModal').onclick = ()=> document.getElementById('teamModal').classList.remove('open');
+}
+function viewArchiveStandings(seasonName){
+  const ar = state.archives.find(a=>a.season===seasonName);
+  if(!ar) return;
+  const st = computeStandings(ar.teams, ar.matches);
+  const rows = st.map((tm,i)=>`<tr class="${i<3?'top3':''}"><td>${i+1}</td><td class="name-col">${esc(tm.name)}</td><td>${tm.played}</td><td>${tm.won}</td><td>${tm.drawn}</td><td>${tm.lost}</td><td>${tm.gf}</td><td>${tm.ga}</td><td>${tm.gf-tm.ga}</td><td class="pts">${tm.pts}</td></tr>`).join('') || `<tr><td colspan="10">—</td></tr>`;
+  document.getElementById('teamModalBox').innerHTML = `
+    <div class="close-row"><button class="ghost" id="closeTeamModal">${t('modalClose')}</button></div>
+    <h2>${t('archiveStandingsTitle')}${esc(seasonName)}</h2>
+    <table class="standings" style="margin-top:10px"><thead><tr><th>${t('colRank')}</th><th class="name-col">${t('colTeam')}</th><th>${t('colPlayed')}</th><th>${t('colWon')}</th><th>${t('colDrawn')}</th><th>${t('colLost')}</th><th>${t('colFor')}</th><th>${t('colAgainst')}</th><th>${t('colDiff')}</th><th>${t('colPts')}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  document.getElementById('teamModal').classList.add('open');
+  document.getElementById('closeTeamModal').onclick = ()=> document.getElementById('teamModal').classList.remove('open');
+}
+
+function attachHandlers(){
+  document.querySelectorAll('#langsw button').forEach(b=>{ b.onclick = ()=>{ ui.lang = b.dataset.lang; render(); }; });
+  document.querySelectorAll('nav.tabbar button').forEach(b=>{ b.onclick = ()=>{ ui.tab=b.dataset.tab; render(); }; });
+  document.querySelectorAll('[data-open-team]').forEach(el=>{ el.onclick = ()=> openTeamModal(el.dataset.openTeam); });
+
+  if(ui.tab==='standings'){
+    document.querySelectorAll('[data-stgroup]').forEach(b=>{ b.onclick=()=>{ ui.standingsGroup=b.dataset.stgroup; render(); }; });
+    const sb = document.getElementById('shareStandings');
+    if(sb) sb.onclick = ()=>{
+      const groupsPresent = [...new Set(state.teams.map(tm=>tm.group).filter(Boolean))];
+      const cur = ui.standingsGroup || 'all';
+      const shareTeams = (groupsPresent.length>0 && cur!=='all') ? state.teams.filter(tm=>tm.group===cur) : state.teams;
+      const st = computeStandings(shareTeams);
+      let text = t('shareIntro')+state.season+(cur!=='all'?' — '+cur:'')+'\n'+t('shareStandingsLbl');
+      st.forEach((tm,i)=>{ text += `${i+1}. ${tm.name} — ${tm.pts}${t('ptsWord')}\n`; });
+      shareText(text);
+    };
+  }
+  if(ui.tab==='schedule'){
+    document.querySelectorAll('[data-sched]').forEach(b=>{ b.onclick=()=>{ ui.scheduleSub=b.dataset.sched; ui.scheduleValue=todayISO(); render(); }; });
+    const sd = document.getElementById('schedDate'); if(sd) sd.onchange=()=>{ ui.scheduleValue=sd.value; render(); };
+    const sm = document.getElementById('schedMonth'); if(sm) sm.onchange=()=>{ ui.scheduleValue=sm.value+'-01'; render(); };
+  }
+  if(ui.tab==='scorers'){ document.querySelectorAll('[data-scsub]').forEach(b=>{ b.onclick=()=>{ ui.scorersSub=b.dataset.scsub; render(); }; }); }
+  if(ui.tab==='print'){
+    document.querySelectorAll('[data-psub]').forEach(b=>{ b.onclick=()=>{ ui.printSub=b.dataset.psub; render(); }; });
+    const ms = document.getElementById('matchSelect'); if(ms) ms.onchange=()=>{ ui.selectedMatch=ms.value; render(); };
+    const psBtn = document.getElementById('printSheetBtn');
+    if(psBtn) psBtn.onclick=()=>{ document.getElementById('printArea').innerHTML = document.getElementById('sheetPreview').innerHTML; window.print(); };
+    const perSel = document.getElementById('periodSelect'); if(perSel) perSel.onchange=()=>{ ui.printPeriod=perSel.value; render(); };
+    const perDate = document.getElementById('periodDate'); if(perDate) perDate.onchange=()=>{ ui.printValue=perDate.value; render(); };
+    const schedBtn = document.getElementById('printSchedBtn');
+    if(schedBtn) schedBtn.onclick=()=>{ document.getElementById('printArea').innerHTML = document.getElementById('schedulePreview').innerHTML; window.print(); };
+  }
+  if(ui.tab==='admin'){
+    const pinBtn = document.getElementById('pinBtn');
+    if(pinBtn) pinBtn.onclick=()=>{
+      const val = document.getElementById('pinInput').value;
+      const found = state.admins.find(a=>a.pin===val);
+      if(found){ ui.isAdmin=true; ui.adminName=found.name; ui.adminError=''; render(); }
+      else { ui.adminError=t('wrongPin'); render(); }
+    };
+    const logoutBtn = document.getElementById('logoutBtn');
+    if(logoutBtn) logoutBtn.onclick=()=>{ ui.isAdmin=false; ui.adminName=''; render(); };
+
+    const addTeamBtn = document.getElementById('addTeamBtn');
+    if(addTeamBtn) addTeamBtn.onclick = async ()=>{
+      const name = document.getElementById('newTeamName').value.trim();
+      const color = document.getElementById('newTeamColor').value;
+      const group = document.getElementById('newTeamGroup').value.trim();
+      if(!name) return;
+      state.teams.push({id:uid('t'), name, color, group, players:[]});
+      addLog(`أضاف فريق «${name}»${group?' - مجموعة '+group:''}`, `Équipe ajoutée : « ${name} »${group?' - groupe '+group:''}`);
+      await saveData(); render();
+    };
+    document.querySelectorAll('[data-save-group]').forEach(b=>{
+      b.onclick = async ()=>{
+        const tid = b.dataset.saveGroup;
+        const val = document.getElementById('editGroup_'+tid).value.trim();
+        const tm = state.teams.find(x=>x.id===tid);
+        if(tm){ tm.group = val; }
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-toggle-team]').forEach(b=>{ b.onclick=()=>{ ui.expandedTeam = ui.expandedTeam===b.dataset.toggleTeam ? null : b.dataset.toggleTeam; render(); }; });
+    document.querySelectorAll('[data-add-player]').forEach(b=>{
+      b.onclick = async ()=>{
+        const tid = b.dataset.addPlayer;
+        const input = document.getElementById('newPlayer_'+tid);
+        const name = input.value.trim();
+        if(!name) return;
+        const tm = state.teams.find(x=>x.id===tid);
+        if(!tm.players) tm.players=[];
+        tm.players.push({id:uid('p'), name});
+        addLog(`أضاف اللاعب ${name} إلى ${tm.name}`, `Joueur ajouté : ${name} (${tm.name})`);
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-del-player]').forEach(b=>{
+      b.onclick = async ()=>{
+        const [tid,pid] = b.dataset.delPlayer.split('|');
+        const tm = state.teams.find(x=>x.id===tid);
+        if(tm){ tm.players = (tm.players||[]).filter(p=>p.id!==pid); }
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-del-team]').forEach(b=>{
+      b.onclick = async ()=>{
+        const id = b.dataset.delTeam;
+        if(!confirm(t('confirmDeleteTeam'))) return;
+        const tm = state.teams.find(x=>x.id===id);
+        state.teams = state.teams.filter(t2=>t2.id!==id);
+        state.matches = state.matches.filter(m=>m.home!==id && m.away!==id);
+        addLog(`حذف فريق «${tm?tm.name:''}»`, `Équipe supprimée : « ${tm?tm.name:''} »`);
+        await saveData(); render();
+      };
+    });
+
+    const addMatchBtn = document.getElementById('addMatchBtn');
+    if(addMatchBtn) addMatchBtn.onclick = async ()=>{
+      const home = document.getElementById('matchHome').value;
+      const away = document.getElementById('matchAway').value;
+      if(!home || !away || home===away){ alert(t('chooseTwoTeams')); return; }
+      const date = document.getElementById('matchDate').value;
+      if(!date){ alert(t('chooseDate')); return; }
+      const time = document.getElementById('matchTime').value.trim();
+      const venue = document.getElementById('matchVenue').value.trim();
+      const round = document.getElementById('matchRound').value.trim();
+      const stage = document.getElementById('matchStage').value;
+      state.matches.push({id:uid('m'), home, away, date, time, venue, round, stage, homeScore:null, awayScore:null, status:'scheduled', events:[]});
+      addLog(`برمج مباراة ${teamName(home)} × ${teamName(away)}`, `Match programmé : ${teamName(home)} × ${teamName(away)}`);
+      await saveData(); render();
+    };
+    document.querySelectorAll('[data-save-result]').forEach(b=>{
+      b.onclick = async ()=>{
+        const id = b.dataset.saveResult;
+        const hVal = document.querySelector(`[data-score-home="${id}"]`).value;
+        const aVal = document.querySelector(`[data-score-away="${id}"]`).value;
+        const m = state.matches.find(x=>x.id===id);
+        if(hVal===''||aVal===''){ m.homeScore=null; m.awayScore=null; m.status='scheduled'; }
+        else { m.homeScore=parseInt(hVal,10); m.awayScore=parseInt(aVal,10); m.status='finished'; }
+        addLog(`حدّث نتيجة ${teamName(m.home)} × ${teamName(m.away)}`, `Résultat mis à jour : ${teamName(m.home)} × ${teamName(m.away)}`);
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-toggle-match]').forEach(b=>{ b.onclick=()=>{ ui.expandedMatch = ui.expandedMatch===b.dataset.toggleMatch ? null : b.dataset.toggleMatch; render(); }; });
+    document.querySelectorAll('[data-add-goal]').forEach(b=>{
+      b.onclick = async ()=>{
+        const id = b.dataset.addGoal;
+        const side = document.getElementById('goalSide_'+id).value;
+        const player = document.getElementById('goalPlayer_'+id).value.trim();
+        const count = parseInt(document.getElementById('goalCount_'+id).value,10)||1;
+        if(!player) return;
+        const m = state.matches.find(x=>x.id===id);
+        if(!m.events) m.events=[];
+        m.events.push({id:uid('e'), type:'goal', side, player, count});
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-add-card]').forEach(b=>{
+      b.onclick = async ()=>{
+        const id = b.dataset.addCard;
+        const side = document.getElementById('cardSide_'+id).value;
+        const player = document.getElementById('cardPlayer_'+id).value.trim();
+        const type = document.getElementById('cardType_'+id).value;
+        if(!player) return;
+        const m = state.matches.find(x=>x.id===id);
+        if(!m.events) m.events=[];
+        m.events.push({id:uid('e'), type, side, player, count:1});
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-del-event]').forEach(b=>{
+      b.onclick = async ()=>{
+        const [mid,eid] = b.dataset.delEvent.split('|');
+        const m = state.matches.find(x=>x.id===mid);
+        if(m){ m.events = (m.events||[]).filter(e=>e.id!==eid); }
+        await saveData(); render();
+      };
+    });
+    document.querySelectorAll('[data-del-match]').forEach(b=>{
+      b.onclick = async ()=>{
+        const id = b.dataset.delMatch;
+        if(!confirm(t('confirmDeleteMatch'))) return;
+        state.matches = state.matches.filter(m=>m.id!==id);
+        await saveData(); render();
+      };
+    });
+    const addNewsBtn = document.getElementById('addNewsBtn');
+    if(addNewsBtn) addNewsBtn.onclick = async ()=>{
+      const input = document.getElementById('newNewsText');
+      const text = input.value.trim();
+      if(!text) return;
+      state.news.push({id:uid('n'), date:todayISO(), text, ts:Date.now()});
+      addLog(`نشر إعلان: ${text.slice(0,30)}`, `Annonce publiée : ${text.slice(0,30)}`);
+      await saveData(); render();
+    };
+    document.querySelectorAll('[data-del-news]').forEach(b=>{ b.onclick = async ()=>{ state.news = state.news.filter(n=>n.id!==b.dataset.delNews); await saveData(); render(); }; });
+
+    const archiveBtn = document.getElementById('archiveBtn');
+    if(archiveBtn) archiveBtn.onclick = async ()=>{
+      const name = document.getElementById('newSeasonName').value.trim();
+      if(!name){ alert(t('enterSeasonName')); return; }
+      if(!confirm(t('confirmArchive'))) return;
+      state.archives.push({season: state.season, teams: state.teams, matches: state.matches, archivedAt: todayISO()});
+      addLog(`أرشف موسم «${state.season}» وبدأ «${name}»`, `Saison « ${state.season} » archivée, nouvelle saison « ${name} »`);
+      state.teams = []; state.matches = [];
+      state.season = name;
+      await saveData(); render();
+    };
+    document.querySelectorAll('[data-view-archive]').forEach(b=>{ b.onclick=()=> viewArchiveStandings(b.dataset.viewArchive); });
+
+    const addAdminBtn = document.getElementById('addAdminBtn');
+    if(addAdminBtn) addAdminBtn.onclick = async ()=>{
+      const name = document.getElementById('newAdminName').value.trim();
+      const pin = document.getElementById('newAdminPin').value.trim();
+      if(!name||!pin){ alert(t('enterManagerFields')); return; }
+      state.admins.push({name, pin});
+      addLog(`أضاف مسيراً جديداً: ${name}`, `Nouvel organisateur ajouté : ${name}`);
+      await saveData(); render();
+    };
+
+    const exportBtn = document.getElementById('exportBackupBtn');
+    if(exportBtn) exportBtn.onclick = exportBackup;
+    const importBtn = document.getElementById('importBackupBtn');
+    const importInput = document.getElementById('importBackupInput');
+    if(importBtn && importInput) importBtn.onclick = ()=> importInput.click();
+    if(importInput) importInput.onchange = (e)=>{ const f = e.target.files[0]; if(f) importBackupFile(f); e.target.value=''; };
+  }
+}
+
+(async function init(){
+  await loadData();
+  render();
+  if('serviceWorker' in navigator && location.protocol.startsWith('http')){
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  }
+})();
+</script>
+</body>
+</html>
